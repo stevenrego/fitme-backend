@@ -1,1 +1,11 @@
- pycache/ *.py[cod] *.egg-info/ env/ venv/ build/ dist/ .venv/ *.sqlite3 staticfiles/ .DS_Store
+__pycache__/
+*.py[cod]
+*.egg-info/
+env/
+venv/
+build/
+dist/
+.venv/
+*.sqlite3
+staticfiles/
+.DS_Store
