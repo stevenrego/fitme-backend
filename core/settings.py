@@ -6,13 +6,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Environment
 env = environ.Env(DJANGO_DEBUG=(bool, False))
-environ.Env.read_env(BASE_DIR / ".env")  # local only; cloud uses real env vars
+environ.Env.read_env(BASE_DIR / ".env")  # local use only; Render uses real env vars
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="unsafe-secret-key-change-me")
 DEBUG = env("DJANGO_DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[".onrender.com", "localhost", "127.0.0.1"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+# Decide DB safely: prefer Postgres when driver exists; else SQLite
+FORCE_SQLITE = env.bool("FORCE_SQLITE", default=False)
+HAS_PG = False
+try:
+    import psycopg  # psycopg 3
+    HAS_PG = True
+except Exception:
+    try:
+        import psycopg2  # psycopg2
+        HAS_PG = True
+    except Exception:
+        HAS_PG = False
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+DB_URL = env("DATABASE_URL", default="").strip()
+if DB_URL and HAS_PG and not FORCE_SQLITE:
+    DATABASES["default"] = dj_database_url.parse(DB_URL, conn_max_age=600, ssl_require=True)
 
 # Apps
 INSTALLED_APPS = [
@@ -65,17 +88,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
-
-# Database: SQLite fallback, Postgres when DATABASE_URL is set
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-DB_URL = env("DATABASE_URL", default="").strip()
-if DB_URL:
-    DATABASES["default"] = dj_database_url.parse(DB_URL, conn_max_age=600, ssl_require=True)
 
 # Custom user model (apps.users AppConfig label is "apps_users")
 AUTH_USER_MODEL = "apps_users.User"
