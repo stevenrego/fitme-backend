@@ -48,13 +48,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 Security behind proxy (Render)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") SESSION_COOKIE_SECURE = not DEBUG CSRF_COOKIE_SECURE = not DEBUG
 
-Next steps (quick):
 
-Ensure runtime.txt exists at the repo root with: python-3.11.9
-Commit and push, then Manual Deploy on Render.
-Verify https://fitme-backend-9hw8.onrender.com/api/health/ returns {"status":"ok"}.
-In Render > Settings > Environment, confirm:
-ALLOWED_HOSTS = .onrender.com,localhost,127.0.0.1
-CSRF_TRUSTED_ORIGINS = https://fitme-backend-9hw8.onrender.com
-CORS_ALLOWED_ORIGINS = http://localhost:3000
-DATABASE_URL is the raw Neon URL (no quotes, includes :5432 and ?sslmode=require)
