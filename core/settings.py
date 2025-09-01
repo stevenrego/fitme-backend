@@ -55,8 +55,11 @@ DATABASES = {
     }
 }
 if env('DATABASE_URL', default=None):
-    import dj_database_url
-    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
+   import dj_database_url
+
+DATABASES = { 'default': { 'ENGINE': 'django.db.backends.sqlite3', 'NAME': BASE_DIR / 'db.sqlite3', } }_
+
+db_url = env('DATABASE_URL', default='').strip() if db_url: DATABASES['default'] = dj_database_url.parse(db_url, conn_max_age=600, ssl_require=True)_
 
 AUTH_USER_MODEL = 'apps_users.User'  # apps.users has label 'apps_users' (see apps/users/apps.py)
 
