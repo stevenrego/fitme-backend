@@ -2,6 +2,11 @@ services:
   - type: web
     name: fitme-backend-9hw8
     env: python
-    buildCommand: pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt
-    startCommand: gunicorn core.wsgi:application --preload --timeout 60
     pythonVersion: 3.11.9
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install --no-cache-dir -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: |
+      python manage.py migrate
+      gunicorn core.wsgi:application --preload --timeout 60
