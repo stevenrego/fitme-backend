@@ -1,10 +1,11 @@
-from django.contrib.auth.models import AbstractUser from django.db import models
+# apps/users/models.py
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 
-class User(AbstractUser): class Roles(models.TextChoices): USER = 'user', 'User' COACH = 'coach', 'Coach' ADMIN = 'admin', 'Admin'
 
-role = models.CharField(max_length=10, choices=Roles.choices, default=Roles.USER) email = models.EmailField(unique=True)
+class User(AbstractUser):
+    # Add custom fields later if needed, e.g.:
+    # phone = models.CharField(max_length=20, blank=True)
+    pass
 
-def save(self, *args, **kwargs):
-    if not self.username:
-        self.username = self.email
-    return super().save(*args, **kwargs)_
+                                                      ^^^^
