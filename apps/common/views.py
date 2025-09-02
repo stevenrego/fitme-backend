@@ -1,3 +1,5 @@
-mport json from django.http import JsonResponse
+from django.http import JsonResponse
 
-def health(request): return JsonResponse({'status': 'ok'})
+
+def health(_request):
+    return JsonResponse({"status": "ok"})
