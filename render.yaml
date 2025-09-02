@@ -1,12 +1,23 @@
 services:
   - type: web
-    name: fitme-backend-9hw8
+    name: fitme-backend
     env: python
-    pythonVersion: 3.11.9
     buildCommand: |
       pip install --upgrade pip setuptools wheel
       pip install --no-cache-dir -r requirements.txt
       python manage.py collectstatic --noinput
-    startCommand: |
-      python manage.py migrate
-      gunicorn core.wsgi:application --preload --timeout 60
+    startCommand: gunicorn core.wsgi:application --log-file -
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: RENDER_EXTERNAL_HOSTNAME
+        fromService:
+          type: web
+          name: fitme-backend
+          property: host
+    healthCheckPath: /api/health/
+    autoDeploy: true
